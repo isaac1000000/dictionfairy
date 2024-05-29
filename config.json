@@ -4,5 +4,7 @@
     "window-size": [
         200,
         300
-    ]
+    ],
+    "grab-selected-hotkey": "ctrl+shift+z",
+    "select-and-grab-hotkey": "ctrl+shift+x"
 }

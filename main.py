@@ -18,6 +18,8 @@ from PyQt6.QtWidgets import (
 
 import sys, json
 
+from input.KeyboardListener import HotkeyManager
+
 with open("config.json") as config_file:
 	config = json.load(config_file)
 
@@ -31,6 +33,7 @@ class MainWindow(QMainWindow):
 		self.setWindowTitle("dictionfairy")
 		self.setFixedSize(QSize(config["window-size"][0], config["window-size"][1]))
 		self.setWindowFlag(Qt.WindowType.WindowStaysOnTopHint, config["stay-on-top"])
+		self.HotkeyManager = HotkeyManager(config["grab-selected-hotkey"], config["select-and-grab-hotkey"])
 
 		self.main_page = self.create_main_page()
 		self.settings_page = self.create_settings_page()
