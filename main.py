@@ -170,6 +170,7 @@ class MainWindow(QMainWindow):
 		return settings_widget
 
 	def new_word_received(self, new_word):
+		# Occurs when a hotkey is pressed to search a new word
 		self.current_word_label.setText(new_word)
 		self.main_content.setText("\n".join(self.Webscraper.search_dict_for(new_word)))
 
