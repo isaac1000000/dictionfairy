@@ -9,6 +9,10 @@ from PyQt6.QtWidgets import (
 	QSizePolicy,
 	QStackedWidget,
 	QPushButton,
+	QScrollArea,
+	QRadioButton,
+	QGroupBox,
+	QComboBox,
 	QWidget
 	)
 
@@ -17,10 +21,11 @@ import sys, json
 with open("config.json") as config_file:
 	config = json.load(config_file)
 
-HSTRETCH_FOR_HEADER_LABEL = 3
-VSTRETCH_FOR_CONTENT = 3
-
 class MainWindow(QMainWindow):
+
+	HSTRETCH_FOR_HEADER_LABEL = 3
+	VSTRETCH_FOR_CONTENT = 3
+
 	def __init__(self):
 		super().__init__()
 		self.setWindowTitle("dictionfairy")
@@ -35,9 +40,10 @@ class MainWindow(QMainWindow):
 
 		self.setCentralWidget(self.stacked_widget)
 
-
 	def create_main_page(self):
 		# Creates the main page with expected contents and results
+
+		SCROLL_BAR_WIDTH = 2
 
 		# Lays out vertical boxes for header and main content
 		main_layout = QVBoxLayout()
@@ -47,7 +53,7 @@ class MainWindow(QMainWindow):
 
 		# The word currently being searched
 		current_word = QLabel("SAMPLEWORD")
-		main_top_layout.addWidget(current_word, stretch=HSTRETCH_FOR_HEADER_LABEL)
+		main_top_layout.addWidget(current_word, stretch=self.HSTRETCH_FOR_HEADER_LABEL)
 
 		# Settings button in top bar redirects to settings page
 		main_settings_button = QPushButton("Settings")
@@ -59,11 +65,15 @@ class MainWindow(QMainWindow):
 		main_layout.addLayout(main_top_layout)
 
 		# Main content of page; dictionary results
-		main_content = QLabel("SAMPLERESULTS " * 100)
+		main_content = QLabel(" ".join(str(x) for x in range(1,300)))
 		main_content.setWordWrap(True)
-		main_content.setAlignment(Qt.AlignmentFlag.AlignTop)
-		main_content.setSizePolicy(QSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding))
-		main_layout.addWidget(main_content, stretch=VSTRETCH_FOR_CONTENT)
+		main_content.setAlignment(Qt.AlignmentFlag.AlignTop or Qt.AlignmentFlag.AlignLeft)
+		main_content.setMaximumWidth(182) # Hardcoded for now, come back later to make dynamic
+		main_scroll = QScrollArea()
+		main_scroll.verticalScrollBar().setStyleSheet("QScrollBar {width:" + str(SCROLL_BAR_WIDTH)  + "px;}")
+		main_scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy(1))
+		main_scroll.setWidget(main_content)
+		main_layout.addWidget(main_scroll, stretch=self.VSTRETCH_FOR_CONTENT)
 
 		# Create and return widget for entire main page
 		main_widget = QWidget()
@@ -79,7 +89,7 @@ class MainWindow(QMainWindow):
 		# Splits header into two sections
 		settings_top_layout = QHBoxLayout()
 
-		settings_top_layout.addWidget(QLabel("Settings"), stretch=HSTRETCH_FOR_HEADER_LABEL)
+		settings_top_layout.addWidget(QLabel("Settings"), stretch=self.HSTRETCH_FOR_HEADER_LABEL)
 
 		# Redirects to main page
 		settings_main_button = QPushButton("Main")
@@ -90,11 +100,63 @@ class MainWindow(QMainWindow):
 		# Adds top section to settings layout
 		settings_layout.addLayout(settings_top_layout)
 
-		# Samples settings
-		setting1 = QLabel("SAMPLESETTING")
-		setting1.setAlignment(Qt.AlignmentFlag.AlignLeft)
-		setting1.setSizePolicy(QSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding))
-		settings_layout.addWidget(setting1, stretch=VSTRETCH_FOR_CONTENT)
+		# Group box for general settings
+		general_settings_group = QGroupBox("General")
+		general_settings_group.setAlignment(Qt.AlignmentFlag.AlignTop)
+
+		# Stay on top radio button
+		stay_on_top_button = QRadioButton("Stay on top")
+
+		# Dictionary selection dropdown
+		preferred_dictionary_label = QLabel("Preferred dictionary")
+		preferred_dictionary_dropdown = QComboBox()
+		preferred_dictionary_dropdown.addItems([
+			"DWDS",
+			"Leo",
+			"Merriam-Webster"])
+
+		# Actual format for general settings
+		general_settings_layout = QVBoxLayout()
+		general_settings_layout.addWidget(stay_on_top_button)
+		general_settings_layout.addWidget(preferred_dictionary_label)
+		general_settings_layout.addWidget(preferred_dictionary_dropdown)
+
+		# Place general settings in the group box
+		general_settings_group.setLayout(general_settings_layout)
+
+		# Group box for display settings
+		display_settings_group = QGroupBox("Display")
+		display_settings_group.setAlignment(Qt.AlignmentFlag.AlignTop)
+
+		# Window size dropdown
+		window_size_label = QLabel("Window size")
+		window_size_dropdown = QComboBox()
+		window_size_dropdown.addItems([
+			"200, 300",
+			"2000, 3000",
+			"10123123, 90187612983471293847"])
+
+		# Text size dropdown
+		text_size_label = QLabel("Text size")
+		text_size_dropdown = QComboBox()
+		text_size_dropdown.addItems([
+			"10",
+			"12",
+			"13"])
+
+		# Format for display settings
+		display_settings_layout = QVBoxLayout()
+		display_settings_layout.addWidget(window_size_label)
+		display_settings_layout.addWidget(window_size_dropdown)
+		display_settings_layout.addWidget(text_size_label)
+		display_settings_layout.addWidget(text_size_dropdown)
+
+		# Put display settings in the group box
+		display_settings_group.setLayout(display_settings_layout)
+
+		# Place all group boxes into the settings layout
+		settings_layout.addWidget(general_settings_group)
+		settings_layout.addWidget(display_settings_group)
 
 		# Create and return widget for entire settings page
 		settings_widget = QWidget()
