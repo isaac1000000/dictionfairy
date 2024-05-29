@@ -71,7 +71,7 @@ class MainWindow(QMainWindow):
 		main_layout.addLayout(main_top_layout)
 
 		# Main content of page; dictionary results
-		self.main_content = QLabel(" ".join(str(x) for x in range(1,300)))
+		self.main_content = QLabel("Welcome to dictionfairy. This is a placeholder definition:\nUse your hotkey to select a new word!")
 		self.main_content.setWordWrap(True)
 		self.main_content.setAlignment(Qt.AlignmentFlag.AlignTop or Qt.AlignmentFlag.AlignLeft)
 		self.main_content.setMaximumWidth(182) # Hardcoded for now, come back later to make dynamic
