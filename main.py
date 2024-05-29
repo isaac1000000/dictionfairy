@@ -171,7 +171,7 @@ class MainWindow(QMainWindow):
 
 	def new_word_received(self, new_word):
 		self.current_word_label.setText(new_word)
-		self.main_content.setText("\n".join(self.raper.search_dict_for(new_word)))
+		self.main_content.setText("\n".join(self.Webscraper.search_dict_for(new_word)))
 
 if __name__ == "__main__":
 	app = QApplication(sys.argv)
