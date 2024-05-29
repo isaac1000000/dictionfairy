@@ -27,13 +27,14 @@ class MainWindow(QMainWindow):
 
 	HSTRETCH_FOR_HEADER_LABEL = 3
 	VSTRETCH_FOR_CONTENT = 3
+	SCROLL_BAR_WIDTH = 2
 
 	def __init__(self):
 		super().__init__()
 		self.setWindowTitle("dictionfairy")
 		self.setFixedSize(QSize(config["window-size"][0], config["window-size"][1]))
 		self.setWindowFlag(Qt.WindowType.WindowStaysOnTopHint, config["stay-on-top"])
-		self.HotkeyManager = HotkeyManager(config["grab-selected-hotkey"], config["select-and-grab-hotkey"])
+		self.HotkeyManager = HotkeyManager(config["grab-selected-hotkey"], config["select-and-grab-hotkey"], self)
 
 		self.main_page = self.create_main_page()
 		self.settings_page = self.create_settings_page()
@@ -47,8 +48,6 @@ class MainWindow(QMainWindow):
 	def create_main_page(self):
 		# Creates the main page with expected contents and results
 
-		SCROLL_BAR_WIDTH = 2
-
 		# Lays out vertical boxes for header and main content
 		main_layout = QVBoxLayout()
 
@@ -56,8 +55,8 @@ class MainWindow(QMainWindow):
 		main_top_layout = QHBoxLayout()
 
 		# The word currently being searched
-		current_word = QLabel("SAMPLEWORD")
-		main_top_layout.addWidget(current_word, stretch=self.HSTRETCH_FOR_HEADER_LABEL)
+		self.current_word_label = QLabel("dictionfairy")
+		main_top_layout.addWidget(self.current_word_label, stretch=self.HSTRETCH_FOR_HEADER_LABEL)
 
 		# Settings button in top bar redirects to settings page
 		main_settings_button = QPushButton("Settings")
@@ -74,7 +73,7 @@ class MainWindow(QMainWindow):
 		main_content.setAlignment(Qt.AlignmentFlag.AlignTop or Qt.AlignmentFlag.AlignLeft)
 		main_content.setMaximumWidth(182) # Hardcoded for now, come back later to make dynamic
 		main_scroll = QScrollArea()
-		main_scroll.verticalScrollBar().setStyleSheet("QScrollBar {width:" + str(SCROLL_BAR_WIDTH)  + "px;}")
+		main_scroll.verticalScrollBar().setStyleSheet("QScrollBar {width:" + str(self.SCROLL_BAR_WIDTH)  + "px;}")
 		main_scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy(1))
 		main_scroll.setWidget(main_content)
 		main_layout.addWidget(main_scroll, stretch=self.VSTRETCH_FOR_CONTENT)
@@ -167,6 +166,8 @@ class MainWindow(QMainWindow):
 		settings_widget.setLayout(settings_layout)
 		return settings_widget
 
+	def new_word_received(self, new_word):
+		self.current_word_label.setText(new_word)
 
 if __name__ == "__main__":
 	app = QApplication(sys.argv)

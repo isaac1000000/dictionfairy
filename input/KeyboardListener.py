@@ -7,14 +7,15 @@ class HotkeyManager():
 	then trigger the appropriate event if the right hotkey combination
 	is pressed
 	"""
-	def __init__(self, grab_selected_hotkey, select_and_grab_hotkey):
+	def __init__(self, grab_selected_hotkey, select_and_grab_hotkey, link):
 		self.grab_selected_hotkey = grab_selected_hotkey
 		self.select_and_grab_hotkey = select_and_grab_hotkey
+		self.link = link
 
 		if grab_selected_hotkey != "":
-			keyboard.add_hotkey(grab_selected_hotkey, events.selected_hotkey_trigger, suppress=True)
+			keyboard.add_hotkey(grab_selected_hotkey, events.selected_hotkey_trigger, args=[self.link], suppress=True)
 		if select_and_grab_hotkey != "":
-			keyboard.add_hotkey(select_and_grab_hotkey, events.select_hotkey_trigger, suppress=True)
+			keyboard.add_hotkey(select_and_grab_hotkey, events.select_hotkey_trigger, args=[self.link], suppress=True)
 
 	def clear_grab_selected_hotkey(self):
 		keyboard.remove_hotkey(self.grab_selected_hotkey)
