@@ -30,6 +30,7 @@ class MainWindow(QMainWindow):
 		super().__init__()
 		self.setWindowTitle("dictionfairy")
 		self.setFixedSize(QSize(config["window-size"][0], config["window-size"][1]))
+		self.setWindowFlag(Qt.WindowType.WindowStaysOnTopHint, config["stay-on-top"])
 
 		self.main_page = self.create_main_page()
 		self.settings_page = self.create_settings_page()
