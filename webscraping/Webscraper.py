@@ -13,7 +13,7 @@ class Webscraper():
 		options.add_experimental_option('excludeSwitches', ['enable-logging'])
 		self.driver = webdriver.Chrome(options=options)
 		self.dictionaries = {
-			"dwds": ["https://dwds.de/wb/", self.parse_dwds_response]
+			"dwds.de": ["https://dwds.de/wb/", self.parse_dwds_response]
 		}
 		self.dictionary = dictionary
 

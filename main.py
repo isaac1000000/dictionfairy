@@ -10,9 +10,11 @@ from PyQt6.QtWidgets import (
 	QStackedWidget,
 	QPushButton,
 	QScrollArea,
-	QRadioButton,
+	QCheckBox,
 	QGroupBox,
 	QComboBox,
+	QSlider,
+	QSpinBox,
 	QWidget
 	)
 
@@ -34,7 +36,7 @@ class MainWindow(QMainWindow):
 		super().__init__()
 		self.setWindowTitle("dictionfairy")
 		self.setFixedSize(QSize(config["window-size"][0], config["window-size"][1]))
-		self.setWindowFlag(Qt.WindowType.WindowStaysOnTopHint, config["stay-on-top"])
+		self.setWindowFlag(Qt.WindowType.WindowStaysOnTopHint)
 
 		self.HotkeyManager = HotkeyManager(config["grab-selected-hotkey"], config["select-and-grab-hotkey"], self)
 		self.Webscraper = Webscraper(config["preferred-dictionary"])
@@ -111,15 +113,19 @@ class MainWindow(QMainWindow):
 		general_settings_group.setAlignment(Qt.AlignmentFlag.AlignTop)
 
 		# Stay on top radio button
-		stay_on_top_button = QRadioButton("Stay on top")
+		stay_on_top_button = QCheckBox("Stay on top")
+		stay_on_top_button.setChecked(config["stay-on-top"])
+		stay_on_top_button.checkStateChanged.connect(self.stay_on_top_button_toggled)
 
 		# Dictionary selection dropdown
 		preferred_dictionary_label = QLabel("Preferred dictionary")
 		preferred_dictionary_dropdown = QComboBox()
 		preferred_dictionary_dropdown.addItems([
-			"DWDS",
+			"dwds.de",
 			"Leo",
 			"Merriam-Webster"])
+		preferred_dictionary_dropdown.setCurrentText(config["preferred-dictionary"])
+		preferred_dictionary_dropdown.currentTextChanged.connect(self.preferred_dictionary_changed)
 
 		# Actual format for general settings
 		general_settings_layout = QVBoxLayout()
@@ -134,28 +140,45 @@ class MainWindow(QMainWindow):
 		display_settings_group = QGroupBox("Display")
 		display_settings_group.setAlignment(Qt.AlignmentFlag.AlignTop)
 
-		# Window size dropdown
+		# Window size width and height spinboxes
 		window_size_label = QLabel("Window size")
-		window_size_dropdown = QComboBox()
-		window_size_dropdown.addItems([
-			"200, 300",
-			"2000, 3000",
-			"10123123, 90187612983471293847"])
+		window_size_box = QHBoxLayout()
+		window_size_w_label = QLabel("x: ")
+		window_size_w_label.setAlignment(Qt.AlignmentFlag.AlignRight)
+		window_size_w_spinbox = QSpinBox()
+		window_size_w_spinbox.setMinimum(200)
+		window_size_w_spinbox.setMaximum(1920)
+		window_size_w_spinbox.setSingleStep(40)
+		window_size_w_spinbox.setValue(config["window-size"][0])
+		window_size_w_spinbox.valueChanged.connect(self.window_size_w_changed)
+		window_size_h_label = QLabel("y: ")
+		window_size_h_label.setAlignment(Qt.AlignmentFlag.AlignRight)
+		window_size_h_spinbox = QSpinBox()
+		window_size_h_spinbox.setMinimum(300)
+		window_size_h_spinbox.setMaximum(1080)
+		window_size_h_spinbox.setSingleStep(40)
+		window_size_h_spinbox.setValue(config["window-size"][1])
+		window_size_h_spinbox.valueChanged.connect(self.window_size_h_changed)
+		window_size_box.addWidget(window_size_w_label)
+		window_size_box.addWidget(window_size_w_spinbox)
+		window_size_box.addWidget(window_size_h_label)
+		window_size_box.addWidget(window_size_h_spinbox)
 
-		# Text size dropdown
+
+		# Text size slider
 		text_size_label = QLabel("Text size")
-		text_size_dropdown = QComboBox()
-		text_size_dropdown.addItems([
-			"10",
-			"12",
-			"13"])
+		text_size_slider = QSlider(Qt.Orientation.Horizontal)
+		text_size_slider.setMinimum(6)
+		text_size_slider.setMaximum(30)
+		text_size_slider.setValue(config["text-size"])
+		text_size_slider.valueChanged.connect(self.text_size_changed)
 
 		# Format for display settings
 		display_settings_layout = QVBoxLayout()
 		display_settings_layout.addWidget(window_size_label)
-		display_settings_layout.addWidget(window_size_dropdown)
+		display_settings_layout.addLayout(window_size_box)
 		display_settings_layout.addWidget(text_size_label)
-		display_settings_layout.addWidget(text_size_dropdown)
+		display_settings_layout.addWidget(text_size_slider)
 
 		# Put display settings in the group box
 		display_settings_group.setLayout(display_settings_layout)
@@ -173,6 +196,39 @@ class MainWindow(QMainWindow):
 		# Occurs when a hotkey is pressed to search a new word
 		self.current_word_label.setText(new_word)
 		self.main_content.setText("\n".join(self.Webscraper.search_dict_for(new_word)))
+
+	def stay_on_top_button_toggled(self, checked):
+		# Toggles between window locked to top and not
+		config["stay-on-top"] = (checked == Qt.CheckState.Checked)
+		if config["stay-on-top"]:
+			self.setWindowFlag(Qt.WindowType.WindowStaysOnTopHint, True)
+			self.show()
+		else:
+			self.setWindowFlag(Qt.WindowType.WindowStaysOnTopHint, False)
+			self.show()
+
+	def preferred_dictionary_changed(self, new_text):
+		# Changes the dictionary used for the webscraper
+		config["preferred-dictionary"] = new_text
+		self.Webscraper.set_dictionary(new_text)
+
+	def window_size_w_changed(self, new_width):
+		# Changes the width of the window
+		self.setFixedSize(QSize(new_width, self.height()))
+		config["window-size"][0] = new_width
+
+	def window_size_h_changed(self, new_height):
+		# Changes the height of the window
+		self.setFixedSize(QSize(self.width(), new_height))
+		config["window-size"][1] = new_height
+
+	def text_size_changed(self, new_size):
+		# Not yet implemented but will be done in stylesheets
+		config["text-size"] = new_size
+
+
+
+
 
 if __name__ == "__main__":
 	app = QApplication(sys.argv)
