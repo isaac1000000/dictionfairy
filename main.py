@@ -19,7 +19,7 @@ from PyQt6.QtWidgets import (
 import sys, json
 
 from input.KeyboardListener import HotkeyManager
-from webscraping.
+from webscraping.Webscraper import Webscraper
 
 with open("config.json") as config_file:
 	config = json.load(config_file)
@@ -35,7 +35,9 @@ class MainWindow(QMainWindow):
 		self.setWindowTitle("dictionfairy")
 		self.setFixedSize(QSize(config["window-size"][0], config["window-size"][1]))
 		self.setWindowFlag(Qt.WindowType.WindowStaysOnTopHint, config["stay-on-top"])
+
 		self.HotkeyManager = HotkeyManager(config["grab-selected-hotkey"], config["select-and-grab-hotkey"], self)
+		self.Webscraper = Webscraper(config["preferred-dictionary"])
 
 		self.main_page = self.create_main_page()
 		self.settings_page = self.create_settings_page()
@@ -169,7 +171,7 @@ class MainWindow(QMainWindow):
 
 	def new_word_received(self, new_word):
 		self.current_word_label.setText(new_word)
-		self.main_content = 
+		self.main_content.setText("\n".join(self.raper.search_dict_for(new_word)))
 
 if __name__ == "__main__":
 	app = QApplication(sys.argv)
