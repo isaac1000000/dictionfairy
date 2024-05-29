@@ -19,6 +19,7 @@ from PyQt6.QtWidgets import (
 import sys, json
 
 from input.KeyboardListener import HotkeyManager
+from webscraping.Webscraper import Webscraper
 
 with open("config.json") as config_file:
 	config = json.load(config_file)
@@ -34,7 +35,9 @@ class MainWindow(QMainWindow):
 		self.setWindowTitle("dictionfairy")
 		self.setFixedSize(QSize(config["window-size"][0], config["window-size"][1]))
 		self.setWindowFlag(Qt.WindowType.WindowStaysOnTopHint, config["stay-on-top"])
+
 		self.HotkeyManager = HotkeyManager(config["grab-selected-hotkey"], config["select-and-grab-hotkey"], self)
+		self.Webscraper = Webscraper(config["preferred-dictionary"])
 
 		self.main_page = self.create_main_page()
 		self.settings_page = self.create_settings_page()
@@ -68,14 +71,14 @@ class MainWindow(QMainWindow):
 		main_layout.addLayout(main_top_layout)
 
 		# Main content of page; dictionary results
-		main_content = QLabel(" ".join(str(x) for x in range(1,300)))
-		main_content.setWordWrap(True)
-		main_content.setAlignment(Qt.AlignmentFlag.AlignTop or Qt.AlignmentFlag.AlignLeft)
-		main_content.setMaximumWidth(182) # Hardcoded for now, come back later to make dynamic
+		self.main_content = QLabel(" ".join(str(x) for x in range(1,300)))
+		self.main_content.setWordWrap(True)
+		self.main_content.setAlignment(Qt.AlignmentFlag.AlignTop or Qt.AlignmentFlag.AlignLeft)
+		self.main_content.setMaximumWidth(182) # Hardcoded for now, come back later to make dynamic
 		main_scroll = QScrollArea()
 		main_scroll.verticalScrollBar().setStyleSheet("QScrollBar {width:" + str(self.SCROLL_BAR_WIDTH)  + "px;}")
 		main_scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy(1))
-		main_scroll.setWidget(main_content)
+		main_scroll.setWidget(self.main_content)
 		main_layout.addWidget(main_scroll, stretch=self.VSTRETCH_FOR_CONTENT)
 
 		# Create and return widget for entire main page
@@ -168,6 +171,7 @@ class MainWindow(QMainWindow):
 
 	def new_word_received(self, new_word):
 		self.current_word_label.setText(new_word)
+		self.main_content.setText("\n".join(self.Webscraper.search_dict_for(new_word)))
 
 if __name__ == "__main__":
 	app = QApplication(sys.argv)

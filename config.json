@@ -7,5 +7,6 @@
     ],
     "font-size": 12,
     "grab-selected-hotkey": "ctrl+shift+z",
-    "select-and-grab-hotkey": "ctrl+shift+x"
+    "select-and-grab-hotkey": "ctrl+shift+x",
+    "preferred-dictionary": "dwds"
 }
