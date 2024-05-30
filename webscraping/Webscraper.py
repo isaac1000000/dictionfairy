@@ -22,7 +22,11 @@ class Webscraper():
 		return self.dictionaries[self.dictionary][1]()
 
 	def parse_dwds_response(self):
-		return [x.text for x in self.driver.find_elements(By.CLASS_NAME, "dwdswb-lesart-def")]
+		result = [x.text for x in self.driver.find_elements(By.CLASS_NAME, "dwdswb-lesart-def")]
+		if not result:
+			result = ["No results"]
+		return result
+
 
 	def set_dictionary(self, dictionary):
 		self.dictionary = dictionary

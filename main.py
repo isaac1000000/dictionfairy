@@ -241,5 +241,7 @@ if __name__ == "__main__":
 
 	app.exec()
 
+	window.HotkeyManager.clear_all_hotkeys()
+
 with open("config.json", "w") as config_file:
 	json.dump(config, config_file, indent=4)
