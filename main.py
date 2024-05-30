@@ -61,6 +61,7 @@ class MainWindow(QMainWindow):
 
 		# The word currently being searched
 		self.current_word_label = QLabel("dictionfairy")
+		self.current_word_label.setAlignment(Qt.AlignmentFlag.AlignLeft)
 		main_top_layout.addWidget(self.current_word_label, stretch=self.HSTRETCH_FOR_HEADER_LABEL)
 
 		# Settings button in top bar redirects to settings page
@@ -195,6 +196,7 @@ class MainWindow(QMainWindow):
 	def new_word_received(self, new_word):
 		# Occurs when a hotkey is pressed to search a new word
 		self.current_word_label.setText(new_word)
+		self.main_content.setText("Loading...")
 		self.main_content.setText("\n".join(self.Webscraper.search_dict_for(new_word)))
 
 	def stay_on_top_button_toggled(self, checked):

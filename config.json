@@ -6,7 +6,7 @@
         300
     ],
     "text-size": 12,
-    "grab-selected-hotkey": "ctrl+shift+z",
-    "select-and-grab-hotkey": "ctrl+shift+x",
+    "grab-selected-hotkey": "ctrl+shift+;",
+    "select-and-grab-hotkey": "ctrl+shift+l",
     "preferred-dictionary": "dwds.de"
 }

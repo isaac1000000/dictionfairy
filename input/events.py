@@ -26,7 +26,8 @@ def select_hotkey_trigger(link):
 	word that was selected
 	"""
 	clipboard_contents = pyperclip.paste()
-	mouse.double_click()
+	mouse.wait()
+	mouse.click()
 	time.sleep(.1)
 	keyboard.send("ctrl+c")
 	time.sleep(.1)
