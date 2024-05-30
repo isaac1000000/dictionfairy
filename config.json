@@ -7,6 +7,6 @@
     ],
     "text-size": 12,
     "grab-selected-hotkey": "ctrl+shift+;",
-    "select-and-grab-hotkey": "ctrl+shift+l",
+    "select-and-grab-hotkey": "ctrl+shift+'",
     "preferred-dictionary": "dwds.de"
 }

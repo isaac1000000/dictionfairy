@@ -77,7 +77,7 @@ class MainWindow(QMainWindow):
 		self.main_content = QLabel("Welcome to dictionfairy. This is a placeholder definition:\nUse your hotkey to select a new word!")
 		self.main_content.setWordWrap(True)
 		self.main_content.setAlignment(Qt.AlignmentFlag.AlignTop or Qt.AlignmentFlag.AlignLeft)
-		self.main_content.setMaximumWidth(182) # Hardcoded for now, come back later to make dynamic
+		self.main_content.setFixedSize(QSize(config["window-size"][0]-18, self.main_content.height()))
 		main_scroll = QScrollArea()
 		main_scroll.verticalScrollBar().setStyleSheet("QScrollBar {width:" + str(self.SCROLL_BAR_WIDTH)  + "px;}")
 		main_scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy(1))
@@ -217,6 +217,7 @@ class MainWindow(QMainWindow):
 	def window_size_w_changed(self, new_width):
 		# Changes the width of the window
 		self.setFixedSize(QSize(new_width, self.height()))
+		self.main_content.setFixedSize(QSize(new_width-18, self.main_content.height()))
 		config["window-size"][0] = new_width
 
 	def window_size_h_changed(self, new_height):
