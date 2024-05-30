@@ -14,7 +14,6 @@ class HotkeyManager():
 
 		if grab_selected_hotkey != "":
 			keyboard.add_hotkey(grab_selected_hotkey, events.selected_hotkey_trigger, args=[self.link], suppress=True, trigger_on_release=True)
-			print(grab_selected_hotkey)
 		if select_and_grab_hotkey != "":
 			keyboard.add_hotkey(select_and_grab_hotkey, events.select_hotkey_trigger, args=[self.link], suppress=True)
 
