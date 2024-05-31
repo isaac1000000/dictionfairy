@@ -123,7 +123,7 @@ class MainWindow(QMainWindow):
 		preferred_dictionary_dropdown = QComboBox()
 		preferred_dictionary_dropdown.addItems([
 			"dwds.de",
-			"Leo",
+			"leo",
 			"Merriam-Webster"])
 		preferred_dictionary_dropdown.setCurrentText(config["preferred-dictionary"])
 		preferred_dictionary_dropdown.currentTextChanged.connect(self.preferred_dictionary_changed)

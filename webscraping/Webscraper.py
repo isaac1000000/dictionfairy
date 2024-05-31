@@ -8,11 +8,12 @@ class Webscraper():
 	"""
 	def __init__(self, dictionary):
 		options = webdriver.ChromeOptions()
-		options.add_argument("--headless")
+		options.add_argument("--headless=new")
 		options.add_experimental_option('excludeSwitches', ['enable-logging'])
 		self.driver = webdriver.Chrome(options=options)
 		self.dictionaries = {
-			"dwds.de": ["https://dwds.de/wb/", self.parse_dwds_response]
+			"dwds.de": ["https://dwds.de/wb/", self.parse_dwds_response],
+			"leo": ["https://dict.leo.org/german-english/", self.parse_leo_response]
 		}
 		self.dictionary = dictionary
 
@@ -22,6 +23,12 @@ class Webscraper():
 
 	def parse_dwds_response(self):
 		result = [x.text for x in self.driver.find_elements(By.CLASS_NAME, "dwdswb-lesart-def")]
+		if not result:
+			result = ["No results"]
+		return result
+
+	def parse_leo_response(self):
+		result = [x.text for x in self.driver.find_elements(By.XPATH, "//td[@lang='en']")]
 		if not result:
 			result = ["No results"]
 		return result
