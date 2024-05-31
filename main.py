@@ -199,6 +199,15 @@ class MainWindow(QMainWindow):
 		self.main_content.setText("Loading...")
 		self.main_content.setText("\n".join(self.Webscraper.search_dict_for(new_word)))
 
+	def loading_message_received(self, loading_message):
+		# Occurs when a hotkey has been pressed, but a word has not been selected
+		self.current_word_label.setText(loading_message)
+		self.main_content.setText("Waiting for word selection...")
+
+	def no_word_selected(self):
+		self.current_word_label.setText("No word selected... Try again!")
+		self.main_content.setText("Waiting for word selection...")
+
 	def stay_on_top_button_toggled(self, checked):
 		# Toggles between window locked to top and not
 		config["stay-on-top"] = (checked == Qt.CheckState.Checked)
@@ -228,10 +237,6 @@ class MainWindow(QMainWindow):
 	def text_size_changed(self, new_size):
 		# Not yet implemented but will be done in stylesheets
 		config["text-size"] = new_size
-
-
-
-
 
 if __name__ == "__main__":
 	app = QApplication(sys.argv)
