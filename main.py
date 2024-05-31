@@ -205,6 +205,7 @@ class MainWindow(QMainWindow):
 		self.main_content.setText("Waiting for word selection...")
 
 	def no_word_selected(self):
+		# Occurs when a word has been selected, but the word is empty
 		self.current_word_label.setText("No word selected... Try again!")
 		self.main_content.setText("Waiting for word selection...")
 
