@@ -13,17 +13,14 @@ def selected_hotkey_trigger(link):
 	text previously stored in the clipboard
 	"""
 	clipboard_contents = pyperclip.paste()
-	print(clipboard_contents)
 	keyboard.send("ctrl+c")
 	time.sleep(.1)
 	highlighted_text = pyperclip.paste()
 	if highlighted_text == clipboard_contents:
-		print("word matched already selected")
 		link.no_word_selected()
 		return
 	highlighted_text = cleanup_results(highlighted_text)
 	if highlighted_text == "":		
-		print("word was empty")
 		link.no_word_selected()
 	else:
 		link.new_word_received(highlighted_text)
@@ -36,7 +33,6 @@ def select_hotkey_trigger(link):
 	"""
 
 	clipboard_contents = pyperclip.paste()
-	print(clipboard_contents)
 	link.loading_message_received("Select word...")
 	mouse.wait()
 	mouse.click()
@@ -45,12 +41,10 @@ def select_hotkey_trigger(link):
 	time.sleep(.1)
 	highlighted_text = pyperclip.paste()
 	if highlighted_text == clipboard_contents:
-		print("word matched already selected")
 		link.no_word_selected()
 		return
 	highlighted_text = cleanup_results(highlighted_text)
 	if highlighted_text == "":
-		print("word was empty")
 		link.no_word_selected()
 	else:
 		link.new_word_received(highlighted_text)
