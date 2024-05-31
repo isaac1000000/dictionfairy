@@ -31,7 +31,6 @@ def select_hotkey_trigger(link):
 	Awaits left-click, then selects word with double-click and returns the
 	word that was selected
 	"""
-
 	clipboard_contents = pyperclip.paste()
 	link.loading_message_received("Select word...")
 	mouse.wait()
@@ -51,6 +50,7 @@ def select_hotkey_trigger(link):
 	pyperclip.copy(clipboard_contents)
 
 def cleanup_results(results):
+	# TODO: Handle dashes for words on linebreaks? Might cause issues with french entries
 	results = results.strip()
 	return results
    

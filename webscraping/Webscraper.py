@@ -6,7 +6,6 @@ class Webscraper():
 	"""
 	Defines functionality for webscraping dictionary definitions
 	"""
-
 	def __init__(self, dictionary):
 		options = webdriver.ChromeOptions()
 		options.add_argument("--headless")
@@ -27,12 +26,8 @@ class Webscraper():
 			result = ["No results"]
 		return result
 
-
 	def set_dictionary(self, dictionary):
 		self.dictionary = dictionary
-
-
-
 
 if __name__ == "__main__":
 	webscraper = Webscraper("dwds")
