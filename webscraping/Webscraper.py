@@ -12,8 +12,8 @@ class Webscraper():
 		options.add_experimental_option('excludeSwitches', ['enable-logging'])
 		self.driver = webdriver.Chrome(options=options)
 		self.dictionaries = {
-			"dwds.de": ["https://dwds.de/wb/", self.parse_dwds_response],
-			"leo": ["https://dict.leo.org/german-english/", self.parse_leo_response]
+			"dwds.de: de-de": ["https://dwds.de/wb/", self.parse_dwds_response],
+			"leo: de-en": ["https://dict.leo.org/german-english/", self.parse_leo_response]
 		}
 		self.dictionary = dictionary
 
