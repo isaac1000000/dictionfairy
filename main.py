@@ -169,7 +169,6 @@ class MainWindow(QMainWindow):
 		window_size_box.addWidget(window_size_h_label)
 		window_size_box.addWidget(window_size_h_spinbox)
 
-
 		# Text size slider
 		text_size_label = QLabel("Text size")
 		text_size_slider = QSlider(Qt.Orientation.Horizontal)
@@ -188,9 +187,13 @@ class MainWindow(QMainWindow):
 		# Put display settings in the group box
 		display_settings_group.setLayout(display_settings_layout)
 
+		# Filler box for proper proportions when expanded
+		filler_box = QLabel()
+
 		# Place all group boxes into the settings layout
 		settings_layout.addWidget(general_settings_group)
 		settings_layout.addWidget(display_settings_group)
+		settings_layout.addWidget(filler_box, stretch=400)
 
 		# Create and return widget for entire settings page
 		settings_widget = QWidget()
