@@ -1,6 +1,7 @@
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
+from utils.exceptions import ConfigErrorException
 
 class Webscraper():
 	"""
@@ -16,6 +17,8 @@ class Webscraper():
 			"leo: de-en": ["https://dict.leo.org/german-english/", self.parse_leo_response],
 			"WordReference: fr-en": ["https://wordreference.com/fren/", self.parse_wr_response]
 		}
+		if dictionary not in self.dictionaries.keys():
+			raise ConfigErrorException("preferred-dictionary")
 		self.dictionary = dictionary
 
 	def search_dict_for(self, word):
