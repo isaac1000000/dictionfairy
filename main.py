@@ -32,6 +32,7 @@ class MainWindow(QMainWindow):
 	HSTRETCH_FOR_HEADER_LABEL = 3
 	VSTRETCH_FOR_CONTENT = 3
 	SCROLL_BAR_WIDTH = 2
+	MAX_STRETCH = 400
 
 	def __init__(self):
 		super().__init__()
@@ -168,6 +169,7 @@ class MainWindow(QMainWindow):
 		window_size_box.addWidget(window_size_w_spinbox)
 		window_size_box.addWidget(window_size_h_label)
 		window_size_box.addWidget(window_size_h_spinbox)
+		window_size_box.addWidget(QLabel(), stretch=self.MAX_STRETCH)
 
 		# Text size slider
 		text_size_label = QLabel("Text size")
@@ -176,6 +178,7 @@ class MainWindow(QMainWindow):
 		text_size_slider.setMaximum(30)
 		text_size_slider.setValue(config["text-size"])
 		text_size_slider.valueChanged.connect(self.text_size_changed)
+		text_size_slider.setFixedSize(QSize(160, 18))
 
 		# Format for display settings
 		display_settings_layout = QVBoxLayout()
@@ -193,7 +196,7 @@ class MainWindow(QMainWindow):
 		# Place all group boxes into the settings layout
 		settings_layout.addWidget(general_settings_group)
 		settings_layout.addWidget(display_settings_group)
-		settings_layout.addWidget(filler_box, stretch=400)
+		settings_layout.addWidget(filler_box, stretch=self.MAX_STRETCH)
 
 		# Create and return widget for entire settings page
 		settings_widget = QWidget()
