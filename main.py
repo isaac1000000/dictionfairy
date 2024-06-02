@@ -22,6 +22,7 @@ import sys, json
 
 from input.KeyboardListener import HotkeyManager
 from webscraping.Webscraper import Webscraper
+from utils.exceptions import ConfigErrorException
 
 with open("config.json") as config_file:
 	config = json.load(config_file)
@@ -35,7 +36,10 @@ class MainWindow(QMainWindow):
 	def __init__(self):
 		super().__init__()
 		self.setWindowTitle("dictionfairy")
-		self.setFixedSize(QSize(config["window-size"][0], config["window-size"][1]))
+		self.window_size = [config["window-size"][0], config["window-size"][1]]
+		if not (200 <= self.window_size[0] <= 1920 and 300 <= self.window_size[1] <= 1080):
+			raise ConfigErrorException("window-size", "window width must be between 200 and 1920, and height must be between 300 and 1080")
+		self.setFixedSize(QSize(*self.window_size))
 		self.setWindowFlag(Qt.WindowType.WindowStaysOnTopHint)
 
 		self.HotkeyManager = HotkeyManager(config["grab-selected-hotkey"], config["select-and-grab-hotkey"], self)
@@ -226,13 +230,15 @@ class MainWindow(QMainWindow):
 
 	def window_size_w_changed(self, new_width):
 		# Changes the width of the window
-		self.setFixedSize(QSize(new_width, self.height()))
+		self.window_size[0] = new_width
+		self.setFixedSize(QSize(*self.window_size))
 		self.main_content.setFixedSize(QSize(new_width-18, self.main_content.height()))
 		config["window-size"][0] = new_width
 
 	def window_size_h_changed(self, new_height):
 		# Changes the height of the window
-		self.setFixedSize(QSize(self.width(), new_height))
+		self.window_size[1] = new_height
+		self.setFixedSize(QSize(*self.window_size))
 		config["window-size"][1] = new_height
 
 	def text_size_changed(self, new_size):
