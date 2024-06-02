@@ -35,12 +35,17 @@ class MainWindow(QMainWindow):
 	VSTRETCH_FOR_CONTENT = 3
 	SCROLL_BAR_WIDTH = 2
 	MAX_STRETCH = 400
+	MIN_WIDTH = 200
+	MAX_WIDTH = 1920
+	MIN_HEIGHT = 300
+	MAX_HEIGHT = 1080
+	CONTENT_MARGIN = 18
 
 	def __init__(self):
 		super().__init__()
 		self.setWindowTitle("dictionfairy")
 		self.window_size = [config["window-size"][0], config["window-size"][1]]
-		if not (200 <= self.window_size[0] <= 1920 and 300 <= self.window_size[1] <= 1080):
+		if not (self.MIN_WIDTH <= self.window_size[0] <= self.MAX_WIDTH and self.MIN_HEIGHT <= self.window_size[1] <= self.MAX_HEIGHT):
 			raise ConfigErrorException("window-size", "window width must be between 200 and 1920, and height must be between 300 and 1080")
 		self.setFixedSize(QSize(*self.window_size))
 		self.setWindowFlag(Qt.WindowType.WindowStaysOnTopHint)
@@ -84,7 +89,7 @@ class MainWindow(QMainWindow):
 		self.main_content = QLabel("Welcome to dictionfairy. This is a placeholder definition:\nUse your hotkey to select a new word!")
 		self.main_content.setWordWrap(True)
 		self.main_content.setAlignment(Qt.AlignmentFlag.AlignTop or Qt.AlignmentFlag.AlignLeft)
-		self.main_content.setFixedSize(QSize(config["window-size"][0]-18, self.main_content.height()))
+		self.main_content.setFixedSize(QSize(config["window-size"][0]-self.CONTENT_MARGIN, self.main_content.height()))
 		main_scroll = QScrollArea()
 		main_scroll.verticalScrollBar().setStyleSheet("QScrollBar {width:" + str(self.SCROLL_BAR_WIDTH)  + "px;}")
 		main_scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy(1))
@@ -154,16 +159,16 @@ class MainWindow(QMainWindow):
 		window_size_w_label = QLabel("x: ")
 		window_size_w_label.setAlignment(Qt.AlignmentFlag.AlignRight)
 		window_size_w_spinbox = QSpinBox()
-		window_size_w_spinbox.setMinimum(200)
-		window_size_w_spinbox.setMaximum(1920)
+		window_size_w_spinbox.setMinimum(self.MIN_WIDTH)
+		window_size_w_spinbox.setMaximum(self.MAX_WIDTH)
 		window_size_w_spinbox.setSingleStep(40)
 		window_size_w_spinbox.setValue(config["window-size"][0])
 		window_size_w_spinbox.valueChanged.connect(self.window_size_w_changed)
 		window_size_h_label = QLabel("y: ")
 		window_size_h_label.setAlignment(Qt.AlignmentFlag.AlignRight)
 		window_size_h_spinbox = QSpinBox()
-		window_size_h_spinbox.setMinimum(300)
-		window_size_h_spinbox.setMaximum(1080)
+		window_size_h_spinbox.setMinimum(self.MIN_HEIGHT)
+		window_size_h_spinbox.setMaximum(self.MAX_HEIGHT)
 		window_size_h_spinbox.setSingleStep(40)
 		window_size_h_spinbox.setValue(config["window-size"][1])
 		window_size_h_spinbox.valueChanged.connect(self.window_size_h_changed)
@@ -240,7 +245,7 @@ class MainWindow(QMainWindow):
 		# Changes the width of the window
 		self.window_size[0] = new_width
 		self.setFixedSize(QSize(*self.window_size))
-		self.main_content.setFixedSize(QSize(new_width-18, self.main_content.height()))
+		self.main_content.setFixedSize(QSize(new_width-self.CONTENT_MARGIN, self.main_content.height()))
 		config["window-size"][0] = new_width
 
 	def window_size_h_changed(self, new_height):
