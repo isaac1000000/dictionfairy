@@ -22,7 +22,9 @@ import sys, json
 
 from input.KeyboardListener import HotkeyManager
 from webscraping.Webscraper import Webscraper
-from utils.exceptions import ConfigErrorException
+from utils.exceptions import *
+
+supported_languages = ["en"]
 
 with open("config.json") as config_file:
 	config = json.load(config_file)
@@ -252,6 +254,9 @@ class MainWindow(QMainWindow):
 		config["text-size"] = new_size
 
 if __name__ == "__main__":
+	if config["language"] not in supported_languages:
+		raise InvalidLanguageException(config["language"])
+
 	app = QApplication(sys.argv)
 
 	window = MainWindow()
