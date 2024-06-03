@@ -1,5 +1,5 @@
 from PyQt6.QtCore import QSize, Qt
-from PyQt6.QtGui import QPixmap
+from PyQt6.QtGui import QPixmap, QIcon
 from PyQt6.QtWidgets import (
 	QApplication,
 	QMainWindow,
@@ -44,6 +44,7 @@ class MainWindow(QMainWindow):
 	def __init__(self):
 		super().__init__()
 		self.setWindowTitle("dictionfairy")
+		self.setWindowIcon(QIcon("imgs/df-icon-transparent.png"))
 		self.window_size = [config["window-size"][0], config["window-size"][1]]
 		if not (self.MIN_WIDTH <= self.window_size[0] <= self.MAX_WIDTH and self.MIN_HEIGHT <= self.window_size[1] <= self.MAX_HEIGHT):
 			raise ConfigErrorException("window-size", "window width must be between 200 and 1920, and height must be between 300 and 1080")
