@@ -47,7 +47,8 @@ class MainWindow(QMainWindow):
 		self.setWindowIcon(QIcon("imgs/df-icon-transparent.ico"))
 		self.window_size = [config["window-size"][0], config["window-size"][1]]
 		if not (self.MIN_WIDTH <= self.window_size[0] <= self.MAX_WIDTH and self.MIN_HEIGHT <= self.window_size[1] <= self.MAX_HEIGHT):
-			raise ConfigErrorException("window-size", "window width must be between 200 and 1920, and height must be between 300 and 1080")
+			raise ConfigErrorException("window-size", f"window width must be between {self.MIN_WIDTH} and " +
+				f"{self.MAX_WIDTH}, and height must be between {self.MIN_HEIGHT} and {self.MAX_HEIGHT}")
 		self.setFixedSize(QSize(*self.window_size))
 		self.setWindowFlag(Qt.WindowType.WindowStaysOnTopHint)
 
