@@ -27,22 +27,42 @@ class Webscraper():
 
 	def parse_dwds_response(self):
 		# Parses a response from dwds.de german to german dictionary
-		result = [x.text for x in self.driver.find_elements(By.CLASS_NAME, "dwdswb-lesart-def")]
-		if not result:
-			result = ["No results"]
-		return result
+		responses = self.driver.find_elements(By.CSS_SELECTOR, ".dwdswb-lesart-def")
+		for index, response in enumerate(responses):
+			# Retrieve text from elements hidden in case page is multi-tabbed
+			if not response.is_displayed():
+				responses[index] = str(response.get_attribute("innerText"))
+			else:
+				responses[index] = response.text
+		responses = [response.replace("⟩", ") ").replace("⟨", "(").strip() for response in responses][:15]
+		if not responses:
+			responses = ["No results"]
+		return responses
 
 	def parse_leo_response(self):
 		# Parses a response from leo german to english dictionary
-		result = [x.text for x in self.driver.find_elements(By.XPATH, "//td[@lang='en']")]
+		result = []
+		# Nouns
+		result += [x.text for x in self.driver.find_elements(By.XPATH, """
+			//div[@aria-label='Suchergebnisse in der Kategorie Nouns']
+			/descendant::td[@lang='en'][not(samp/mark or samp/a/mark)]""")][:5]
+		# Adjectives / adverbs
+		result += [x.text for x in self.driver.find_elements(By.XPATH, """
+			//div[@aria-label='Suchergebnisse in der Kategorie Adjectives / Adverbs']
+			/descendant::td[@lang='en'][not(samp/mark or samp/a/mark)]""")][:5]
+		# Verbs
+		result += [x.text for x in self.driver.find_elements(By.XPATH, """
+			//div[@aria-label='Suchergebnisse in der Kategorie Verbs']
+			/descendant::td[@lang='en'][not(samp/mark or samp/a/mark)]""")][:5]
 		if not result:
 			result = ["No results"]
 		return result
 
 	def parse_wr_response(self):
 		# Parses a response from WordReference french to english dictionary
-		# TODO: Still returns "Anglais" header
-		result = [x.text for x in self.driver.find_elements(By.CLASS_NAME, "ToWrd")]
+		result = [x.text for x in self.driver.find_elements(By.XPATH, """
+			//tr[not(contains(@class, 'langHeader'))]
+			/td[@class='ToWrd']""")][:15]
 		if not result:
 			result = ["No results"]
 		return result
@@ -52,7 +72,5 @@ class Webscraper():
 
 if __name__ == "__main__":
 	webscraper = Webscraper("dwds")
-	print(webscraper.search_dict_for("Gut"))
+	print(webscraper.search_dict_for("gut"))
 	print(webscraper.search_dict_for("Prolet"))
-
-#problème

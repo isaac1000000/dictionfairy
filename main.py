@@ -1,5 +1,5 @@
 from PyQt6.QtCore import QSize, Qt
-from PyQt6.QtGui import QPixmap, QIcon
+from PyQt6.QtGui import QPixmap, QIcon, QFont
 from PyQt6.QtWidgets import (
 	QApplication,
 	QMainWindow,
@@ -25,6 +25,8 @@ from webscraping.Webscraper import Webscraper
 from utils.exceptions import *
 
 supported_languages = ["en"]
+
+STANDARD_FONT_FAMILY = "Times"
 
 with open("config.json") as config_file:
 	config = json.load(config_file)
@@ -216,7 +218,7 @@ class MainWindow(QMainWindow):
 		# Occurs when a hotkey is pressed to search a new word
 		self.current_word_label.setText(new_word)
 		self.main_content.setText("Loading...")
-		self.main_content.setText("\n".join(self.Webscraper.search_dict_for(new_word)))
+		self.main_content.setText("• " + "\n• ".join(self.Webscraper.search_dict_for(new_word)))
 
 	def loading_message_received(self, loading_message):
 		# Occurs when a hotkey has been pressed, but a word has not been selected
@@ -259,6 +261,8 @@ class MainWindow(QMainWindow):
 	def text_size_changed(self, new_size):
 		# Not yet implemented but will be done in stylesheets
 		config["text-size"] = new_size
+		self.setFont(QFont(STANDARD_FONT_FAMILY, new_size))
+
 
 if __name__ == "__main__":
 	if config["language"] not in supported_languages:
@@ -266,8 +270,14 @@ if __name__ == "__main__":
 
 	app = QApplication(sys.argv)
 
+	with open("core.qss", 'r') as core_stylesheet:
+		style = core_stylesheet.read()
+		app.setStyleSheet(style)
+
 	window = MainWindow()
 	window.show()
+
+	window.setFont(QFont(STANDARD_FONT_FAMILY, config["text-size"]))
 
 	app.exec()
 
