@@ -5,8 +5,9 @@
         200,
         300
     ],
-    "text-size": 10,
+    "text-size": 12,
     "grab-selected-hotkey": "ctrl+u",
     "select-and-grab-hotkey": "ctrl+i",
-    "preferred-dictionary": "dwds.de: de-de"
+    "preferred-dictionary": "dwds.de: de-de",
+    "style": "default"
 }

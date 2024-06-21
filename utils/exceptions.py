@@ -11,3 +11,9 @@ class InvalidLanguageException(ConfigErrorException):
 	def __init__(self, lang):
 		self.lang = lang
 		super().__init__("language", "The only currently supported language is english. Please change the 'lang' parameter in config.json to 'en'") 
+
+class InvalidStyleException(ConfigErrorException):
+	# Exception for style that currently does not exist
+	def __init__(self, style):
+		self.style = style
+		super().__init__("style", "The only currently supported style is default. Please change the 'style' parameter in config.json to 'default'")

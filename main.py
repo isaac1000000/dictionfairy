@@ -18,15 +18,15 @@ from PyQt6.QtWidgets import (
 	QWidget
 	)
 
-import sys, json
+import sys, json, os
 
 from input.KeyboardListener import HotkeyManager
 from webscraping.Webscraper import Webscraper
 from utils.exceptions import *
 
-supported_languages = ["en"]
+basedir = os.path.dirname(__file__)
 
-STANDARD_FONT_FAMILY = "Times"
+supported_languages = ["en"]
 
 with open("config.json") as config_file:
 	config = json.load(config_file)
@@ -46,7 +46,7 @@ class MainWindow(QMainWindow):
 	def __init__(self):
 		super().__init__()
 		self.setWindowTitle("dictionfairy")
-		self.setWindowIcon(QIcon("imgs/df-icon-transparent.ico"))
+		self.setWindowIcon(QIcon(os.path.join(basedir, "icon.ico")))
 		self.window_size = [config["window-size"][0], config["window-size"][1]]
 		if not (self.MIN_WIDTH <= self.window_size[0] <= self.MAX_WIDTH and self.MIN_HEIGHT <= self.window_size[1] <= self.MAX_HEIGHT):
 			raise ConfigErrorException("window-size", f"window width must be between {self.MIN_WIDTH} and " +
@@ -185,8 +185,8 @@ class MainWindow(QMainWindow):
 		# Text size slider
 		text_size_label = QLabel("Text size")
 		text_size_slider = QSlider(Qt.Orientation.Horizontal)
-		text_size_slider.setMinimum(6)
-		text_size_slider.setMaximum(30)
+		text_size_slider.setMinimum(10)
+		text_size_slider.setMaximum(36)
 		text_size_slider.setValue(config["text-size"])
 		text_size_slider.valueChanged.connect(self.text_size_changed)
 		text_size_slider.setFixedSize(QSize(160, 18))
@@ -261,7 +261,8 @@ class MainWindow(QMainWindow):
 	def text_size_changed(self, new_size):
 		# Not yet implemented but will be done in stylesheets
 		config["text-size"] = new_size
-		self.setFont(QFont(STANDARD_FONT_FAMILY, new_size))
+		self.setStyleSheet("font-size: " + str(new_size) + "px")
+
 
 
 if __name__ == "__main__":
@@ -270,14 +271,17 @@ if __name__ == "__main__":
 
 	app = QApplication(sys.argv)
 
-	with open("core.qss", 'r') as core_stylesheet:
-		style = core_stylesheet.read()
-		app.setStyleSheet(style)
+	try:
+		with open(os.path.join(basedir, "styles/" + config["style"] + ".qss"), 'r') as core_stylesheet:
+			style = core_stylesheet.read()
+			app.setStyleSheet(style)
+	except:
+		raise InvalidStyleException(config["style"])
 
 	window = MainWindow()
 	window.show()
 
-	window.setFont(QFont(STANDARD_FONT_FAMILY, config["text-size"]))
+	window.setStyleSheet("font-size: " + str(config["text-size"]) + "px")
 
 	app.exec()
 
