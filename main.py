@@ -21,6 +21,7 @@ from PyQt6.QtWidgets import (
 import sys, json, os
 
 from input.KeyboardListener import HotkeyManager
+from input.events import change_select_hotkey_trigger, change_selected_hotkey_trigger
 from webscraping.Webscraper import Webscraper
 from utils.exceptions import *
 
@@ -126,6 +127,21 @@ class MainWindow(QMainWindow):
 		general_settings_group = QGroupBox("General")
 		general_settings_group.setAlignment(Qt.AlignmentFlag.AlignTop)
 
+		# Buttons to change both hotkeys
+		change_selected_hotkey_box = QHBoxLayout()
+		change_selected_hotkey_label = QLabel("Search highlighted: ")
+		change_selected_hotkey_button = QPushButton(config["grab-selected-hotkey"])
+		change_selected_hotkey_button.clicked.connect(lambda: change_selected_hotkey_trigger(self.HotkeyManager, change_selected_hotkey_button, config))
+		change_selected_hotkey_box.addWidget(change_selected_hotkey_label)
+		change_selected_hotkey_box.addWidget(change_selected_hotkey_button)
+		change_select_hotkey_box = QHBoxLayout()
+		change_select_hotkey_label = QLabel("Search on click: ")
+		change_select_hotkey_button = QPushButton(config["select-and-grab-hotkey"])
+		change_select_hotkey_button.clicked.connect(lambda: change_select_hotkey_trigger(self.HotkeyManager, change_select_hotkey_button, config))
+		change_select_hotkey_box.addWidget(change_select_hotkey_label)
+		change_select_hotkey_box.addWidget(change_select_hotkey_button)
+
+
 		# Stay on top radio button
 		stay_on_top_button = QCheckBox("Stay on top")
 		stay_on_top_button.setChecked(config["stay-on-top"])
@@ -143,6 +159,8 @@ class MainWindow(QMainWindow):
 
 		# Actual format for general settings
 		general_settings_layout = QVBoxLayout()
+		general_settings_layout.addLayout(change_selected_hotkey_box)
+		general_settings_layout.addLayout(change_select_hotkey_box)
 		general_settings_layout.addWidget(stay_on_top_button)
 		general_settings_layout.addWidget(preferred_dictionary_label)
 		general_settings_layout.addWidget(preferred_dictionary_dropdown)
@@ -271,8 +289,8 @@ if __name__ == "__main__":
 				    "language": "en",
 				    "stay-on-top": true,
 				    "window-size": [
-				        200,
-				        300
+				        240,
+				        380
 				    ],
 				    "text-size": 12,
 				    "grab-selected-hotkey": "ctrl+u",

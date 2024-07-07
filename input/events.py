@@ -45,3 +45,23 @@ def cleanup_results(results):
 	results = results.strip()
 	return results
    
+def change_select_hotkey_trigger(hotkey_manager, button, config_write):
+	"""
+	Waits for hotkey from keyboard, then sets the select hotkey in the hotkey manager to
+	whatever was returned. Also sets the text of the relevant button and writes to the config file
+	"""
+	new_hotkey = keyboard.read_hotkey()
+	hotkey_manager.set_select_and_grab_hotkey(new_hotkey)
+	button.setText(new_hotkey)
+	config_write["select-and-grab-hotkey"] = new_hotkey
+
+def change_selected_hotkey_trigger(hotkey_manager, button, config_write):
+	"""
+	Waits for hotkey from keybaord, then sets the selected hotkey in the hotkey manager to
+	whatever was returned. Also sets the text of the relevant button and writes to the config file
+	"""
+	new_hotkey = keyboard.read_hotkey()
+	hotkey_manager.set_grab_selected_hotkey(new_hotkey)
+	button.setText(new_hotkey)
+	config_write["select-and-grab-hotkey"] = new_hotkey
+

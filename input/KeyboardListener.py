@@ -29,9 +29,9 @@ class HotkeyManager():
 	def set_grab_selected_hotkey(self, target):
 		self.clear_grab_selected_hotkey()
 		self.grab_selected_hotkey = target
-		add_hotkey(grab_selected_hotkey, events.selected_hotkey_trigger)
+		keyboard.add_hotkey(self.grab_selected_hotkey, events.selected_hotkey_trigger, args=[self.link], suppress=True, trigger_on_release=True)
 
 	def set_select_and_grab_hotkey(self, target):
 		self.clear_select_and_grab_hotkey()
 		self.select_and_grab_hotkey = target
-		add_hotkey(select_and_grab_hotkey, events.select_hotkey_trigger)
+		keyboard.add_hotkey(self.select_and_grab_hotkey, events.select_hotkey_trigger, args=[self.link], suppress=True, trigger_on_release=True)
