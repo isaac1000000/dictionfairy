@@ -28,27 +28,6 @@ basedir = os.path.dirname(__file__)
 
 supported_languages = ["en"]
 
-if not os.path.exists("config.json"):
-	with open("config.json", "w") as config_file:
-		config_file.write("""
-			{
-			    "language": "en",
-			    "stay-on-top": true,
-			    "window-size": [
-			        200,
-			        300
-			    ],
-			    "text-size": 12,
-			    "grab-selected-hotkey": "ctrl+u",
-			    "select-and-grab-hotkey": "ctrl+i",
-			    "preferred-dictionary": "dwds.de: de-de",
-			    "style": "default"
-			}
-			""")
-
-with open("config.json") as config_file:
-	config = json.load(config_file)
-
 class MainWindow(QMainWindow):
 
 	HSTRETCH_FOR_HEADER_LABEL = 3
@@ -135,7 +114,7 @@ class MainWindow(QMainWindow):
 		settings_top_layout.addWidget(QLabel("Settings"), stretch=self.HSTRETCH_FOR_HEADER_LABEL)
 
 		# Redirects to main page
-		settings_main_button = QPushButton("Main")
+		settings_main_button = QPushButton("Back")
 		settings_main_button.setSizePolicy(QSizePolicy(QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Fixed))
 		settings_main_button.clicked.connect(lambda: self.stacked_widget.setCurrentIndex(0))
 		settings_top_layout.addWidget(settings_main_button)
@@ -284,6 +263,28 @@ class MainWindow(QMainWindow):
 
 
 if __name__ == "__main__":
+
+	if not os.path.exists("config.json"):
+		with open("config.json", "w") as config_file:
+			config_file.write("""
+				{
+				    "language": "en",
+				    "stay-on-top": true,
+				    "window-size": [
+				        200,
+				        300
+				    ],
+				    "text-size": 12,
+				    "grab-selected-hotkey": "ctrl+u",
+				    "select-and-grab-hotkey": "ctrl+i",
+				    "preferred-dictionary": "dwds.de: de-de",
+				    "style": "default"
+				}
+				""")
+
+	with open("config.json") as config_file:
+		config = json.load(config_file)
+
 	if config["language"] not in supported_languages:
 		raise InvalidLanguageException(config["language"])
 
@@ -305,5 +306,5 @@ if __name__ == "__main__":
 
 	window.HotkeyManager.clear_all_hotkeys()
 
-with open("config.json", "w") as config_file:
-	json.dump(config, config_file, indent=4)
+	with open("config.json", "w") as config_file:
+		json.dump(config, config_file, indent=4)
