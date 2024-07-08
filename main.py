@@ -14,6 +14,7 @@ from PyQt6.QtWidgets import (
 	QGroupBox,
 	QComboBox,
 	QSlider,
+	QLineEdit,
 	QSpinBox,
 	QWidget
 	)
@@ -74,9 +75,16 @@ class MainWindow(QMainWindow):
 		main_top_layout = QHBoxLayout()
 
 		# The word currently being searched
-		self.current_word_label = QLabel("dictionfairy")
+		self.current_word_label = QLineEdit("dictionfairy")
 		self.current_word_label.setAlignment(Qt.AlignmentFlag.AlignLeft)
+		self.current_word_label.setReadOnly(True)
+		self.current_word_label.editingFinished.connect(self.current_word_edited)
 		main_top_layout.addWidget(self.current_word_label, stretch=self.HSTRETCH_FOR_HEADER_LABEL)
+
+		# Edit the searched word
+		self.current_word_edit_button = QPushButton(QIcon("imgs/edit-button.svg"), None, None)
+		self.current_word_edit_button.clicked.connect(self.current_word_edit_button_pressed)
+		main_top_layout.addWidget(self.current_word_edit_button)
 
 		# Settings button in top bar redirects to settings page
 		main_settings_button = QPushButton("Settings")
@@ -234,6 +242,17 @@ class MainWindow(QMainWindow):
 		self.current_word_label.setText(new_word)
 		self.main_content.setText("Loading...")
 		self.main_content.setText("• " + "\n• ".join(self.Webscraper.search_dict_for(new_word)))
+
+	def current_word_edited(self):
+		self.current_word_label.setReadOnly(1)
+		new_word = self.current_word_label.text()
+		self.new_word_received(new_word)
+
+	def current_word_edit_button_pressed(self):
+		if self.current_word_label.isReadOnly():
+			self.current_word_label.setReadOnly(0)
+		else:
+			self.current_word_label.setReadOnly(1)
 
 	def loading_message_received(self, loading_message):
 		# Occurs when a hotkey has been pressed, but a word has not been selected
