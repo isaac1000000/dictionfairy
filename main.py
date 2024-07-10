@@ -1,5 +1,5 @@
 from PyQt6.QtCore import QSize, Qt
-from PyQt6.QtGui import QPixmap, QIcon, QFont
+from PyQt6.QtGui import QPixmap, QIcon, QFont, QCursor
 from PyQt6.QtWidgets import (
 	QApplication,
 	QMainWindow,
@@ -39,7 +39,6 @@ class MainWindow(QMainWindow):
 
 	HSTRETCH_FOR_HEADER_LABEL = 3
 	VSTRETCH_FOR_CONTENT = 3
-	SCROLL_BAR_WIDTH = 2
 	MAX_STRETCH = 400
 	MIN_WIDTH = 200
 	MAX_WIDTH = 1920
@@ -80,40 +79,43 @@ class MainWindow(QMainWindow):
 		main_top_layout = QHBoxLayout()
 
 		# The word currently being searched
-		self.current_word_label = QLineEdit("dictionfairy")
+		self.current_word_label = QLineEdit("dictionfairy", objectName="current-word-label")
 		self.current_word_label.setAlignment(Qt.AlignmentFlag.AlignLeft)
 		self.current_word_label.setReadOnly(True)
 		self.current_word_label.editingFinished.connect(self.current_word_edited)
 		main_top_layout.addWidget(self.current_word_label, stretch=self.HSTRETCH_FOR_HEADER_LABEL)
 
 		# Edit the searched word
-		self.current_word_edit_button = QPushButton(QIcon("imgs/edit-button.svg"), None, None)
+		self.current_word_edit_button = QPushButton(QIcon("imgs/edit-button.svg"), None, None, objectName="current-word-edit-button")
 		self.current_word_edit_button.clicked.connect(self.current_word_edit_button_pressed)
+		self.current_word_edit_button.setCursor(QCursor(Qt.CursorShape.PointingHandCursor))
 		main_top_layout.addWidget(self.current_word_edit_button)
 
 		# Settings button in top bar redirects to settings page
 		main_settings_button = QPushButton(_("Settings"))
 		main_settings_button.setSizePolicy(QSizePolicy(QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Fixed))
 		main_settings_button.clicked.connect(lambda: self.stacked_widget.setCurrentIndex(1))
+		main_settings_button.setCursor(QCursor(Qt.CursorShape.PointingHandCursor))
+		main_settings_button.setProperty("objectClass", "page-button")
 		main_top_layout.addWidget(main_settings_button)
 
 		# Adds the top bar to the main layout
 		main_layout.addLayout(main_top_layout)
 
 		# Main content of page; dictionary results
-		self.main_content = QLabel(_("Welcome to dictionfairy. This is a placeholder definition:\nUse your hotkey to select a new word!"))
+		self.main_content = QLabel(_("Welcome to dictionfairy. This is a placeholder definition:\nUse your hotkey to select a new word!"), objectName="main-content")
 		self.main_content.setWordWrap(True)
 		self.main_content.setAlignment(Qt.AlignmentFlag.AlignTop or Qt.AlignmentFlag.AlignLeft)
 		self.main_content.setFixedSize(QSize(config["window-size"][0]-self.CONTENT_MARGIN, self.main_content.height()))
-		main_scroll = QScrollArea()
-		main_scroll.verticalScrollBar().setStyleSheet("QScrollBar {width:" + str(self.SCROLL_BAR_WIDTH)  + "px;}")
+		main_scroll = QScrollArea(objectName="main-scroll-area")
 		main_scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy(1))
 		main_scroll.setWidget(self.main_content)
 		main_layout.addWidget(main_scroll, stretch=self.VSTRETCH_FOR_CONTENT)
 
 		# Create and return widget for entire main page
-		main_widget = QWidget()
+		main_widget = QWidget(objectName="main-page")
 		main_widget.setLayout(main_layout)
+		main_widget.setProperty("objectClass", "page")
 		return main_widget
 
 	def create_settings_page(self):
@@ -125,50 +127,59 @@ class MainWindow(QMainWindow):
 		# Splits header into two sections
 		settings_top_layout = QHBoxLayout()
 
-		settings_top_layout.addWidget(QLabel(_("Settings")), stretch=self.HSTRETCH_FOR_HEADER_LABEL)
+		settings_top_header = QLabel(_("Settings"), objectName="settings-header")
+		settings_top_layout.addWidget(settings_top_header, stretch=self.HSTRETCH_FOR_HEADER_LABEL)
 
 		# Redirects to main page
 		settings_main_button = QPushButton(_("Back"), objectName="back-button")
 		settings_main_button.setSizePolicy(QSizePolicy(QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Fixed))
 		settings_main_button.clicked.connect(lambda: self.stacked_widget.setCurrentIndex(0))
+		settings_main_button.setCursor(QCursor(Qt.CursorShape.PointingHandCursor))
+		settings_main_button.setProperty("objectClass", "page-button")
 		settings_top_layout.addWidget(settings_main_button)
 
 		# Adds top section to settings layout
 		settings_layout.addLayout(settings_top_layout)
 
 		# Group box for general settings
-		general_settings_group = QGroupBox(_("General"))
+		general_settings_group = QGroupBox(_("General"), objectName="general-header")
 		general_settings_group.setAlignment(Qt.AlignmentFlag.AlignTop)
 
 		# Buttons to change both hotkeys
 		change_selected_hotkey_box = QHBoxLayout()
-		change_selected_hotkey_label = QLabel(_("Search highlighted: "))
-		change_selected_hotkey_button = QPushButton(config["grab-selected-hotkey"])
+		change_selected_hotkey_label = QLabel(_("Search highlighted: "), objectName="change-selected-hotkey-label")
+		change_selected_hotkey_button = QPushButton(config["grab-selected-hotkey"], objectName="change-selected-hotkey-button")
 		change_selected_hotkey_button.clicked.connect(lambda: change_selected_hotkey_trigger(self.HotkeyManager, change_selected_hotkey_button, config))
+		change_selected_hotkey_button.setCursor(QCursor(Qt.CursorShape.PointingHandCursor))
+		change_selected_hotkey_button.setProperty("objectClass", "hotkey-button")
 		change_selected_hotkey_box.addWidget(change_selected_hotkey_label)
 		change_selected_hotkey_box.addWidget(change_selected_hotkey_button)
 		change_select_hotkey_box = QHBoxLayout()
-		change_select_hotkey_label = QLabel(_("Search on click: "))
-		change_select_hotkey_button = QPushButton(config["select-and-grab-hotkey"])
+		change_select_hotkey_label = QLabel(_("Search on click: "), objectName="change-select-hotkey-label")
+		change_select_hotkey_button = QPushButton(config["select-and-grab-hotkey"], objectName="change-select-hotkey-button")
 		change_select_hotkey_button.clicked.connect(lambda: change_select_hotkey_trigger(self.HotkeyManager, change_select_hotkey_button, config))
+		change_select_hotkey_button.setCursor(QCursor(Qt.CursorShape.PointingHandCursor))
+		change_select_hotkey_button.setProperty("objectClass", "hotkey-button")
 		change_select_hotkey_box.addWidget(change_select_hotkey_label)
 		change_select_hotkey_box.addWidget(change_select_hotkey_button)
 
 
 		# Stay on top radio button
-		stay_on_top_button = QCheckBox(_("Stay on top"))
+		stay_on_top_button = QCheckBox(_("Stay on top"), objectName="stay-on-top-button")
 		stay_on_top_button.setChecked(config["stay-on-top"])
 		stay_on_top_button.checkStateChanged.connect(self.stay_on_top_button_toggled)
+		stay_on_top_button.setCursor(QCursor(Qt.CursorShape.PointingHandCursor))
 
 		# Dictionary selection dropdown
-		preferred_dictionary_label = QLabel(_("Preferred dictionary"))
-		preferred_dictionary_dropdown = QComboBox()
+		preferred_dictionary_label = QLabel(_("Preferred dictionary"), objectName="preferred-dictionary-label")
+		preferred_dictionary_dropdown = QComboBox(objectName="preferred-dictionary-dropdown")
 		preferred_dictionary_dropdown.addItems([
 			"dwds.de: de-de",
 			"leo: de-en",
 			"WordReference: fr-en"])
 		preferred_dictionary_dropdown.setCurrentText(config["preferred-dictionary"])
 		preferred_dictionary_dropdown.currentTextChanged.connect(self.preferred_dictionary_changed)
+		preferred_dictionary_dropdown.setCursor(QCursor(Qt.CursorShape.PointingHandCursor))
 
 		# Actual format for general settings
 		general_settings_layout = QVBoxLayout()
@@ -182,23 +193,23 @@ class MainWindow(QMainWindow):
 		general_settings_group.setLayout(general_settings_layout)
 
 		# Group box for display settings
-		display_settings_group = QGroupBox(_("Display"))
+		display_settings_group = QGroupBox(_("Display"), objectName="display-header")
 		display_settings_group.setAlignment(Qt.AlignmentFlag.AlignTop)
 
 		# Window size width and height spinboxes
-		window_size_label = QLabel(_("Window size"))
+		window_size_label = QLabel(_("Window size"), objectName="window-size-label")
 		window_size_box = QHBoxLayout()
-		window_size_w_label = QLabel("x: ")
+		window_size_w_label = QLabel("Width: ", objectName="window-size-width-label")
 		window_size_w_label.setAlignment(Qt.AlignmentFlag.AlignRight)
-		window_size_w_spinbox = QSpinBox()
+		window_size_w_spinbox = QSpinBox(objectName="window-size-x-spinbox")
 		window_size_w_spinbox.setMinimum(self.MIN_WIDTH)
 		window_size_w_spinbox.setMaximum(self.MAX_WIDTH)
 		window_size_w_spinbox.setSingleStep(40)
 		window_size_w_spinbox.setValue(config["window-size"][0])
 		window_size_w_spinbox.valueChanged.connect(self.window_size_w_changed)
-		window_size_h_label = QLabel("y: ")
+		window_size_h_label = QLabel("Height: ", objectName="window-size-height-label")
 		window_size_h_label.setAlignment(Qt.AlignmentFlag.AlignRight)
-		window_size_h_spinbox = QSpinBox()
+		window_size_h_spinbox = QSpinBox(objectName="window-size-height-spinbox")
 		window_size_h_spinbox.setMinimum(self.MIN_HEIGHT)
 		window_size_h_spinbox.setMaximum(self.MAX_HEIGHT)
 		window_size_h_spinbox.setSingleStep(40)
@@ -211,12 +222,13 @@ class MainWindow(QMainWindow):
 		window_size_box.addWidget(QLabel(), stretch=self.MAX_STRETCH)
 
 		# Text size slider
-		text_size_label = QLabel(_("Text size"))
+		text_size_label = QLabel(_("Text size"), objectName="text-size-label")
 		text_size_slider = QSlider(Qt.Orientation.Horizontal)
 		text_size_slider.setMinimum(10)
 		text_size_slider.setMaximum(36)
 		text_size_slider.setValue(config["text-size"])
 		text_size_slider.valueChanged.connect(self.text_size_changed)
+		text_size_slider.setCursor(QCursor(Qt.CursorShape.PointingHandCursor))
 		text_size_slider.setFixedSize(QSize(160, 18))
 
 		# Format for display settings
@@ -238,8 +250,9 @@ class MainWindow(QMainWindow):
 		settings_layout.addWidget(filler_box, stretch=self.MAX_STRETCH)
 
 		# Create and return widget for entire settings page
-		settings_widget = QWidget()
+		settings_widget = QWidget(objectName="settings-page")
 		settings_widget.setLayout(settings_layout)
+		settings_widget.setProperty("objectClass", "page")
 		return settings_widget
 
 	def new_word_received(self, new_word):
@@ -256,6 +269,7 @@ class MainWindow(QMainWindow):
 	def current_word_edit_button_pressed(self):
 		if self.current_word_label.isReadOnly():
 			self.current_word_label.setReadOnly(0)
+			self.current_word_label.selectAll()
 		else:
 			self.current_word_label.setReadOnly(1)
 
@@ -298,7 +312,6 @@ class MainWindow(QMainWindow):
 		config["window-size"][1] = new_height
 
 	def text_size_changed(self, new_size):
-		# Not yet implemented but will be done in stylesheets
 		config["text-size"] = new_size
 		self.setStyleSheet("font-size: " + str(new_size) + "px")
 
