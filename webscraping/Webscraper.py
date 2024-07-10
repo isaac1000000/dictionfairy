@@ -10,6 +10,7 @@ class Webscraper():
 	def __init__(self, dictionary):
 		options = webdriver.ChromeOptions()
 		options.add_argument("--headless=new")
+		options.add_argument("--log-level=1")
 		options.add_experimental_option('excludeSwitches', ['enable-logging'])
 		self.driver = webdriver.Chrome(options=options)
 		self.dictionaries = {
