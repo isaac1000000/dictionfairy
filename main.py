@@ -128,7 +128,7 @@ class MainWindow(QMainWindow):
 		settings_top_layout.addWidget(QLabel(_("Settings")), stretch=self.HSTRETCH_FOR_HEADER_LABEL)
 
 		# Redirects to main page
-		settings_main_button = QPushButton(_("Back"))
+		settings_main_button = QPushButton(_("Back"), objectName="back-button")
 		settings_main_button.setSizePolicy(QSizePolicy(QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Fixed))
 		settings_main_button.clicked.connect(lambda: self.stacked_widget.setCurrentIndex(0))
 		settings_top_layout.addWidget(settings_main_button)
@@ -349,6 +349,8 @@ if __name__ == "__main__":
 	app.exec()
 
 	window.HotkeyManager.clear_all_hotkeys()
+
+	window.Webscraper.driver.close()
 
 	with open("config.json", "w") as config_file:
 		json.dump(config, config_file, indent=4)
