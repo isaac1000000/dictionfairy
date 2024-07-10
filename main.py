@@ -21,6 +21,8 @@ from PyQt6.QtWidgets import (
 
 import sys, json, os
 
+import gettext
+
 from input.KeyboardListener import HotkeyManager
 from input.events import change_select_hotkey_trigger, change_selected_hotkey_trigger
 from webscraping.Webscraper import Webscraper
@@ -28,7 +30,10 @@ from utils.exceptions import *
 
 basedir = os.path.dirname(__file__)
 
-supported_languages = ["en"]
+supported_languages = {
+	"en": gettext.translation("base", localedir="locales", languages=["en"]), 
+	"de": gettext.translation("base", localedir="locales", languages=["de"]) # Add fallback=true
+}
 
 class MainWindow(QMainWindow):
 
@@ -87,7 +92,7 @@ class MainWindow(QMainWindow):
 		main_top_layout.addWidget(self.current_word_edit_button)
 
 		# Settings button in top bar redirects to settings page
-		main_settings_button = QPushButton("Settings")
+		main_settings_button = QPushButton(_("Settings"))
 		main_settings_button.setSizePolicy(QSizePolicy(QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Fixed))
 		main_settings_button.clicked.connect(lambda: self.stacked_widget.setCurrentIndex(1))
 		main_top_layout.addWidget(main_settings_button)
@@ -96,7 +101,7 @@ class MainWindow(QMainWindow):
 		main_layout.addLayout(main_top_layout)
 
 		# Main content of page; dictionary results
-		self.main_content = QLabel("Welcome to dictionfairy. This is a placeholder definition:\nUse your hotkey to select a new word!")
+		self.main_content = QLabel(_("Welcome to dictionfairy. This is a placeholder definition:\nUse your hotkey to select a new word!"))
 		self.main_content.setWordWrap(True)
 		self.main_content.setAlignment(Qt.AlignmentFlag.AlignTop or Qt.AlignmentFlag.AlignLeft)
 		self.main_content.setFixedSize(QSize(config["window-size"][0]-self.CONTENT_MARGIN, self.main_content.height()))
@@ -120,10 +125,10 @@ class MainWindow(QMainWindow):
 		# Splits header into two sections
 		settings_top_layout = QHBoxLayout()
 
-		settings_top_layout.addWidget(QLabel("Settings"), stretch=self.HSTRETCH_FOR_HEADER_LABEL)
+		settings_top_layout.addWidget(QLabel(_("Settings")), stretch=self.HSTRETCH_FOR_HEADER_LABEL)
 
 		# Redirects to main page
-		settings_main_button = QPushButton("Back")
+		settings_main_button = QPushButton(_("Back"))
 		settings_main_button.setSizePolicy(QSizePolicy(QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Fixed))
 		settings_main_button.clicked.connect(lambda: self.stacked_widget.setCurrentIndex(0))
 		settings_top_layout.addWidget(settings_main_button)
@@ -132,18 +137,18 @@ class MainWindow(QMainWindow):
 		settings_layout.addLayout(settings_top_layout)
 
 		# Group box for general settings
-		general_settings_group = QGroupBox("General")
+		general_settings_group = QGroupBox(_("General"))
 		general_settings_group.setAlignment(Qt.AlignmentFlag.AlignTop)
 
 		# Buttons to change both hotkeys
 		change_selected_hotkey_box = QHBoxLayout()
-		change_selected_hotkey_label = QLabel("Search highlighted: ")
+		change_selected_hotkey_label = QLabel(_("Search highlighted: "))
 		change_selected_hotkey_button = QPushButton(config["grab-selected-hotkey"])
 		change_selected_hotkey_button.clicked.connect(lambda: change_selected_hotkey_trigger(self.HotkeyManager, change_selected_hotkey_button, config))
 		change_selected_hotkey_box.addWidget(change_selected_hotkey_label)
 		change_selected_hotkey_box.addWidget(change_selected_hotkey_button)
 		change_select_hotkey_box = QHBoxLayout()
-		change_select_hotkey_label = QLabel("Search on click: ")
+		change_select_hotkey_label = QLabel(_("Search on click: "))
 		change_select_hotkey_button = QPushButton(config["select-and-grab-hotkey"])
 		change_select_hotkey_button.clicked.connect(lambda: change_select_hotkey_trigger(self.HotkeyManager, change_select_hotkey_button, config))
 		change_select_hotkey_box.addWidget(change_select_hotkey_label)
@@ -151,12 +156,12 @@ class MainWindow(QMainWindow):
 
 
 		# Stay on top radio button
-		stay_on_top_button = QCheckBox("Stay on top")
+		stay_on_top_button = QCheckBox(_("Stay on top"))
 		stay_on_top_button.setChecked(config["stay-on-top"])
 		stay_on_top_button.checkStateChanged.connect(self.stay_on_top_button_toggled)
 
 		# Dictionary selection dropdown
-		preferred_dictionary_label = QLabel("Preferred dictionary")
+		preferred_dictionary_label = QLabel(_("Preferred dictionary"))
 		preferred_dictionary_dropdown = QComboBox()
 		preferred_dictionary_dropdown.addItems([
 			"dwds.de: de-de",
@@ -177,11 +182,11 @@ class MainWindow(QMainWindow):
 		general_settings_group.setLayout(general_settings_layout)
 
 		# Group box for display settings
-		display_settings_group = QGroupBox("Display")
+		display_settings_group = QGroupBox(_("Display"))
 		display_settings_group.setAlignment(Qt.AlignmentFlag.AlignTop)
 
 		# Window size width and height spinboxes
-		window_size_label = QLabel("Window size")
+		window_size_label = QLabel(_("Window size"))
 		window_size_box = QHBoxLayout()
 		window_size_w_label = QLabel("x: ")
 		window_size_w_label.setAlignment(Qt.AlignmentFlag.AlignRight)
@@ -206,7 +211,7 @@ class MainWindow(QMainWindow):
 		window_size_box.addWidget(QLabel(), stretch=self.MAX_STRETCH)
 
 		# Text size slider
-		text_size_label = QLabel("Text size")
+		text_size_label = QLabel(_("Text size"))
 		text_size_slider = QSlider(Qt.Orientation.Horizontal)
 		text_size_slider.setMinimum(10)
 		text_size_slider.setMaximum(36)
@@ -240,7 +245,7 @@ class MainWindow(QMainWindow):
 	def new_word_received(self, new_word):
 		# Occurs when a hotkey is pressed to search a new word
 		self.current_word_label.setText(new_word)
-		self.main_content.setText("Loading...")
+		self.main_content.setText(_("Loading..."))
 		self.main_content.setText("• " + "\n• ".join(self.Webscraper.search_dict_for(new_word)))
 
 	def current_word_edited(self):
@@ -257,12 +262,12 @@ class MainWindow(QMainWindow):
 	def loading_message_received(self, loading_message):
 		# Occurs when a hotkey has been pressed, but a word has not been selected
 		self.current_word_label.setText(loading_message)
-		self.main_content.setText("Waiting for word selection...")
+		self.main_content.setText(_("Waiting for word selection..."))
 
 	def no_word_selected(self):
 		# Occurs when a word has been selected, but the word is empty
-		self.current_word_label.setText("No word selected... Try again!")
-		self.main_content.setText("Waiting for word selection...")
+		self.current_word_label.setText(_("No word selected... Try again!"))
+		self.main_content.setText(_("Waiting for word selection..."))
 
 	def stay_on_top_button_toggled(self, checked):
 		# Toggles between window locked to top and not
@@ -322,8 +327,10 @@ if __name__ == "__main__":
 	with open("config.json") as config_file:
 		config = json.load(config_file)
 
-	if config["language"] not in supported_languages:
+	if config["language"] not in supported_languages.keys():
 		raise InvalidLanguageException(config["language"])
+
+	supported_languages[config["language"]].install()
 
 	app = QApplication(sys.argv)
 
